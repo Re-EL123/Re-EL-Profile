@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b1224" />
+  <title>Re-EL Technology Services | Software Development & Technical Solutions</title>
+
+  <!-- Premium UI / Motion CDN libraries -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.8/dist/lenis.min.js"></script>
+
+  <style>
+    :root {
+      --navy:#0b1224;
+      --navy2:#111b35;
+      --blue:#21396a;
+      --yellow:#f6c945;
+      --slate:#3b424f;
+      --muted:#98a4bd;
+      --line:rgba(255,255,255,.10);
+      --card:rgba(17,27,53,.72);
+    }
+
+    * { box-sizing:border-box; }
+    html { scroll-behavior:auto; }
+    body {
+      margin:0;
+      color:#eef3ff;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(33,57,106,.42), transparent 32rem),
+        radial-gradient(circle at 90% 12%, rgba(246,201,69,.08), transparent 28rem),
+        var(--navy);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x:hidden;
+    }
+
+    ::selection { background:var(--yellow); color:#101827; }
+
+    .grid-bg {
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size:42px 42px;
+      mask-image:linear-gradient(to bottom, black, transparent 85%);
+    }
+
+    .glass {
+      background:rgba(14,23,45,.68);
+      border:1px solid var(--line);
+      box-shadow:0 20px 70px rgba(0,0,0,.22);
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+    }
+
+    .glass-soft {
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.09);
+      backdrop-filter:blur(14px);
+    }
+
+    .yellow-glow { box-shadow:0 0 60px rgba(246,201,69,.13); }
+
+    .gradient-text {
+      background:linear-gradient(120deg,#fff 15%,#dbe5ff 55%,#f6c945 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+
+    .orb {
+      position:absolute;
+      width:420px;
+      height:420px;
+      border-radius:999px;
+      filter:blur(80px);
+      opacity:.12;
+      pointer-events:none;
+    }
+
+    .service-card, .project-card, .rate-card {
+      transition:transform .45s cubic-bezier(.2,.8,.2,1), border-color .35s, background .35s, box-shadow .35s;
+    }
+    .service-card:hover, .project-card:hover {
+      transform:translateY(-8px);
+      border-color:rgba(246,201,69,.35);
+      box-shadow:0 25px 70px rgba(0,0,0,.25);
+    }
+    .rate-card:hover { transform:translateY(-6px); }
+
+    .shine {
+      position:relative;
+      overflow:hidden;
+    }
+    .shine::after {
+      content:"";
+      position:absolute;
+      inset:-100% -30%;
+      background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.10) 50%,transparent 58%);
+      transform:translateX(-100%);
+      transition:transform .8s;
+      pointer-events:none;
+    }
+    .shine:hover::after { transform:translateX(100%); }
+
+    .marquee { overflow:hidden; }
+    .marquee-track {
+      display:flex;
+      width:max-content;
+      animation:marquee 24s linear infinite;
+    }
+    @keyframes marquee { to { transform:translateX(-50%); } }
+
+    .float { animation:float 5s ease-in-out infinite; }
+    @keyframes float {
+      0%,100% { transform:translateY(0) rotate(0deg); }
+      50% { transform:translateY(-12px) rotate(1deg); }
+    }
+
+    .pulse-dot { animation:pulseDot 2s ease-in-out infinite; }
+    @keyframes pulseDot {
+      0%,100% { box-shadow:0 0 0 0 rgba(246,201,69,.35); }
+      50% { box-shadow:0 0 0 10px rgba(246,201,69,0); }
+    }
+
+    .nav-scrolled {
+      background:rgba(11,18,36,.88)!important;
+      border-bottom-color:rgba(255,255,255,.12)!important;
+      backdrop-filter:blur(18px);
+    }
+
+    .reveal { opacity:0; transform:translateY(28px); }
+    .counter { font-variant-numeric:tabular-nums; }
+
+    @media print {
+      nav, .no-print, .orb, .grid-bg, .marquee { display:none!important; }
+      body { background:white; color:#111827; }
+      .glass, .glass-soft { background:white; color:#111827; border:1px solid #ddd; box-shadow:none; }
+      .gradient-text { color:#21396a; background:none; }
+      .print-dark { color:#111827!important; }
+      section { break-inside:avoid; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="fixed inset-0 grid-bg pointer-events-none -z-10"></div>
+  <div class="orb bg-blue-500 -top-40 -left-48"></div>
+  <div class="orb bg-yellow-400 top-[35rem] -right-48"></div>
+
+  <!-- NAV -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 border-b border-transparent transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 h-20 flex items-center justify-between">
+      <a href="#top" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-xl bg-[#f6c945] text-[#0b1224] grid place-items-center font-black shadow-lg shadow-yellow-400/10 group-hover:rotate-6 transition">
+          RE
+        </div>
+        <div>
+          <div class="font-extrabold tracking-tight">Re-EL</div>
+          <div class="text-[10px] uppercase tracking-[.22em] text-slate-400">Branding & Technologies</div>
+        </div>
+      </a>
+
+      <div class="hidden md:flex items-center gap-7 text-sm text-slate-300">
+        <a href="#services" class="hover:text-white transition">Services</a>
+        <a href="#work" class="hover:text-white transition">Portfolio</a>
+        <a href="#rates" class="hover:text-white transition">Rates</a>
+        <a href="#process" class="hover:text-white transition">Process</a>
+      </div>
+
+      <a href="#contact" class="hidden sm:inline-flex items-center gap-2 rounded-full bg-[#f6c945] px-5 py-2.5 text-sm font-bold text-[#0b1224] hover:scale-105 transition">
+        Discuss a project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+      </a>
+    </div>
+  </nav>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="relative min-h-screen pt-32 pb-20 flex items-center">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8 w-full">
+        <div class="grid lg:grid-cols-[1.12fr_.88fr] gap-14 items-center">
+          <div>
+            <div class="hero-item inline-flex items-center gap-2 glass-soft rounded-full px-4 py-2 text-xs font-semibold text-slate-300 mb-7">
+              <span class="pulse-dot w-2 h-2 rounded-full bg-[#f6c945]"></span>
+              External Technology Services • South Africa
+            </div>
+
+            <h1 class="hero-item text-5xl sm:text-6xl lg:text-7xl font-black tracking-[-.045em] leading-[.98] max-w-4xl">
+              Build. Improve. <span class="gradient-text">Automate.</span>
+            </h1>
+
+            <p class="hero-item mt-7 text-lg lg:text-xl leading-8 text-slate-300 max-w-2xl">
+              Re-EL Branding & Technologies provides practical software development,
+              web applications, integrations, automation and technical support for organisations
+              that need reliable technology without unnecessary overhead.
+            </p>
+
+            <div class="hero-item mt-9 flex flex-wrap gap-4">
+              <a href="#work" class="inline-flex items-center gap-2 rounded-xl bg-white text-[#0b1224] px-6 py-3.5 font-bold hover:-translate-y-1 transition shadow-xl">
+                View selected work <i data-lucide="arrow-down" class="w-4 h-4"></i>
+              </a>
+              <a href="#rates" class="inline-flex items-center gap-2 rounded-xl glass px-6 py-3.5 font-bold text-white hover:-translate-y-1 transition">
+                View service rates <i data-lucide="receipt" class="w-4 h-4"></i>
+              </a>
+            </div>
+
+            <div class="hero-item mt-10 flex flex-wrap gap-x-7 gap-y-3 text-sm text-slate-400">
+              <span class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#f6c945]"></i>Full-stack development</span>
+              <span class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#f6c945]"></i>Project-based delivery</span>
+              <span class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-[#f6c945]"></i>Flexible support</span>
+            </div>
+          </div>
+
+          <div class="relative">
+            <div class="hero-panel glass rounded-[2rem] p-5 lg:p-7 yellow-glow">
+              <div class="flex items-center justify-between mb-5">
+                <div>
+                  <p class="text-xs uppercase tracking-[.2em] text-slate-500">Service Provider Profile</p>
+                  <h2 class="text-2xl font-extrabold mt-1">Technology capability</h2>
+                </div>
+                <div class="w-11 h-11 rounded-2xl bg-[#21396a] grid place-items-center">
+                  <i data-lucide="cpu" class="w-5 h-5 text-[#f6c945]"></i>
+                </div>
+              </div>
+
+              <div class="space-y-3">
+                <div class="glass-soft rounded-2xl p-4 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center"><i data-lucide="code-2" class="w-5 h-5"></i></div>
+                    <div><p class="font-bold">Software Development</p><p class="text-xs text-slate-400">Web • APIs • Applications</p></div>
+                  </div>
+                  <span class="text-[#f6c945] text-xs font-bold">CORE</span>
+                </div>
+                <div class="glass-soft rounded-2xl p-4 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center"><i data-lucide="workflow" class="w-5 h-5"></i></div>
+                    <div><p class="font-bold">Integrations & Automation</p><p class="text-xs text-slate-400">Connect • Automate • Improve</p></div>
+                  </div>
+                  <span class="text-[#f6c945] text-xs font-bold">CORE</span>
+                </div>
+                <div class="glass-soft rounded-2xl p-4 flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center"><i data-lucide="wrench" class="w-5 h-5"></i></div>
+                    <div><p class="font-bold">Maintenance & Support</p><p class="text-xs text-slate-400">Fix • Maintain • Support</p></div>
+                  </div>
+                  <span class="text-[#f6c945] text-xs font-bold">CORE</span>
+                </div>
+              </div>
+
+              <div class="mt-5 rounded-2xl bg-[#f6c945] text-[#0b1224] p-5">
+                <div class="flex items-start gap-3">
+                  <i data-lucide="quote" class="w-5 h-5 mt-1"></i>
+                  <div>
+                    <p class="font-extrabold text-lg leading-6">Technical capacity when you need it.</p>
+                    <p class="text-sm mt-1 opacity-75">Flexible external support without a permanent headcount commitment.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="absolute -z-10 -bottom-8 -left-8 w-28 h-28 rounded-full border border-[#f6c945]/20 float"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee border-y border-white/5 py-4 bg-white/[.018]">
+      <div class="marquee-track">
+        <div class="flex items-center gap-10 px-5 text-xs uppercase tracking-[.25em] text-slate-500">
+          <span>Software Development</span><b class="text-[#f6c945]">•</b>
+          <span>React</span><b class="text-[#f6c945]">•</b>
+          <span>Java</span><b class="text-[#f6c945]">•</b>
+          <span>Node.js</span><b class="text-[#f6c945]">•</b>
+          <span>Spring Boot</span><b class="text-[#f6c945]">•</b>
+          <span>REST APIs</span><b class="text-[#f6c945]">•</b>
+          <span>Automation</span><b class="text-[#f6c945]">•</b>
+          <span>Technical Support</span><b class="text-[#f6c945]">•</b>
+        </div>
+        <div class="flex items-center gap-10 px-5 text-xs uppercase tracking-[.25em] text-slate-500" aria-hidden="true">
+          <span>Software Development</span><b class="text-[#f6c945]">•</b>
+          <span>React</span><b class="text-[#f6c945]">•</b>
+          <span>Java</span><b class="text-[#f6c945]">•</b>
+          <span>Node.js</span><b class="text-[#f6c945]">•</b>
+          <span>Spring Boot</span><b class="text-[#f6c945]">•</b>
+          <span>REST APIs</span><b class="text-[#f6c945]">•</b>
+          <span>Automation</span><b class="text-[#f6c945]">•</b>
+          <span>Technical Support</span><b class="text-[#f6c945]">•</b>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <section id="services" class="py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="reveal max-w-2xl">
+          <p class="text-[#f6c945] text-sm font-bold uppercase tracking-[.22em]">What Re-EL provides</p>
+          <h2 class="text-4xl md:text-5xl font-black tracking-tight mt-3">Technology services built around the requirement.</h2>
+          <p class="mt-5 text-slate-400 text-lg leading-7">From a targeted fix to a complete business application, services can be engaged per project or through ongoing technical support.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+          <article class="reveal service-card shine glass rounded-3xl p-7">
+            <div class="w-12 h-12 rounded-2xl bg-[#21396a] grid place-items-center"><i data-lucide="layers-3" class="text-[#f6c945]"></i></div>
+            <h3 class="text-xl font-extrabold mt-6">Web & Application Development</h3>
+            <p class="text-slate-400 mt-3 leading-6">Responsive websites, internal tools, dashboards and custom web applications designed around business workflows.</p>
+            <div class="mt-6 flex flex-wrap gap-2"><span class="tag">React</span><span class="tag">JavaScript</span><span class="tag">HTML/CSS</span></div>
+          </article>
+
+          <article class="reveal service-card shine glass rounded-3xl p-7">
+            <div class="w-12 h-12 rounded-2xl bg-[#21396a] grid place-items-center"><i data-lucide="server-cog" class="text-[#f6c945]"></i></div>
+            <h3 class="text-xl font-extrabold mt-6">Backend & APIs</h3>
+            <p class="text-slate-400 mt-3 leading-6">REST APIs, backend services, databases and integrations that connect business systems and applications.</p>
+            <div class="mt-6 flex flex-wrap gap-2"><span class="tag">Java</span><span class="tag">Spring Boot</span><span class="tag">Node.js</span></div>
+          </article>
+
+          <article class="reveal service-card shine glass rounded-3xl p-7">
+            <div class="w-12 h-12 rounded-2xl bg-[#21396a] grid place-items-center"><i data-lucide="bug-off" class="text-[#f6c945]"></i></div>
+            <h3 class="text-xl font-extrabold mt-6">Maintenance & Defect Resolution</h3>
+            <p class="text-slate-400 mt-3 leading-6">Troubleshooting, bug fixing, performance improvements, feature changes and ongoing application maintenance.</p>
+            <div class="mt-6 flex flex-wrap gap-2"><span class="tag">Debugging</span><span class="tag">Maintenance</span><span class="tag">QA</span></div>
+          </article>
+
+          <article class="reveal service-card shine glass rounded-3xl p-7">
+            <div class="w-12 h-12 rounded-2xl bg-[#21396a] grid place-items-center"><i data-lucide="plug-zap" class="text-[#f6c945]"></i></div>
+            <h3 class="text-xl font-extrabold mt-6">Integrations</h3>
+            <p class="text-slate-400 mt-3 leading-6">Connect platforms, APIs, databases and third-party services to reduce manual work and improve information flow.</p>
+            <div class="mt-6 flex flex-wrap gap-2"><span class="tag">REST</span><span class="tag">Webhooks</span><span class="tag">APIs</span></div>
+          </article>
+
+          <article class="reveal service-card shine glass rounded-3xl p-7">
+            <div class="w-12 h-12 rounded-2xl bg-[#21396a] grid place-items-center"><i data-lucide="bot" class="text-[#f6c945]"></i></div>
+            <h3 class="text-xl font-extrabold mt-6">Automation & AI Solutions</h3>
+            <p class="text-slate-400 mt-3 leading-6">Automate repetitive workflows and explore practical AI-enabled features where they can create measurable value.</p>
+            <div class="mt-6 flex flex-wrap gap-2"><span class="tag">Automation</span><span class="tag">AI</span><span class="tag">Workflows</span></div>
+          </article>
+
+          <article class="reveal service-card shine glass rounded-3xl p-7">
+            <div class="w-12 h-12 rounded-2xl bg-[#21396a] grid place-items-center"><i data-lucide="headphones" class="text-[#f6c945]"></i></div>
+            <h3 class="text-xl font-extrabold mt-6">Technical Support</h3>
+            <p class="text-slate-400 mt-3 leading-6">Flexible technical assistance for software, websites, hosting, integrations and day-to-day development requirements.</p>
+            <div class="mt-6 flex flex-wrap gap-2"><span class="tag">Remote</span><span class="tag">On-demand</span><span class="tag">Monthly</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- WORK -->
+    <section id="work" class="py-28 bg-white/[.018] border-y border-white/5">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="reveal flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div>
+            <p class="text-[#f6c945] text-sm font-bold uppercase tracking-[.22em]">Selected work</p>
+            <h2 class="text-4xl md:text-5xl font-black tracking-tight mt-3">Products already built.</h2>
+          </div>
+          <a href="https://akani-shibiri-portfolio.vercel.app/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-white transition">
+            Open full portfolio <i data-lucide="external-link" class="w-4 h-4"></i>
+          </a>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-5 mt-12">
+          <article class="reveal project-card glass rounded-3xl overflow-hidden">
+            <div class="h-56 bg-gradient-to-br from-[#21396a] to-[#0b1224] relative p-7 flex flex-col justify-between">
+              <div class="absolute inset-0 opacity-30" style="background-image:radial-gradient(circle at 75% 30%,#f6c945 0 2px,transparent 3px);background-size:28px 28px;"></div>
+              <div class="relative flex justify-between"><span class="text-xs uppercase tracking-[.2em] text-[#f6c945]">Workforce Platform</span><i data-lucide="clock-3"></i></div>
+              <div class="relative text-4xl font-black tracking-tight">CLOCK-KIT</div>
+            </div>
+            <div class="p-7">
+              <h3 class="text-2xl font-extrabold">Workforce clocking & attendance</h3>
+              <p class="text-slate-400 mt-3 leading-6">A workforce management platform concept covering clock-in/out, hours, breaks, leave and attendance/activity management.</p>
+              <div class="mt-5 flex gap-2 flex-wrap"><span class="tag">Web App</span><span class="tag">Workforce</span><span class="tag">Dashboards</span></div>
+              <a href="https://www.clock-kit.rf.gd/" target="_blank" rel="noopener" class="mt-6 inline-flex items-center gap-2 text-[#f6c945] font-bold text-sm">View project <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+            </div>
+          </article>
+
+          <article class="reveal project-card glass rounded-3xl overflow-hidden">
+            <div class="h-56 bg-gradient-to-br from-[#3b424f] to-[#111b35] relative p-7 flex flex-col justify-between">
+              <div class="relative flex justify-between"><span class="text-xs uppercase tracking-[.2em] text-[#f6c945]">Career Tool</span><i data-lucide="file-user"></i></div>
+              <div class="relative text-4xl font-black tracking-tight">RE-V</div>
+            </div>
+            <div class="p-7">
+              <h3 class="text-2xl font-extrabold">CV creation & document platform</h3>
+              <p class="text-slate-400 mt-3 leading-6">A browser-based CV builder focused on structured editing, live preview and professional PDF generation.</p>
+              <div class="mt-5 flex gap-2 flex-wrap"><span class="tag">Alpine.js</span><span class="tag">PDF</span><span class="tag">ATS</span></div>
+              <a href="http://re-v.web-app.rf.gd/" target="_blank" rel="noopener" class="mt-6 inline-flex items-center gap-2 text-[#f6c945] font-bold text-sm">View project <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+            </div>
+          </article>
+
+          <article class="reveal project-card glass rounded-3xl overflow-hidden">
+            <div class="h-56 bg-gradient-to-br from-[#172d59] to-[#0b1224] relative p-7 flex flex-col justify-between">
+              <div class="relative flex justify-between"><span class="text-xs uppercase tracking-[.2em] text-[#f6c945]">AI Platform</span><i data-lucide="sparkles"></i></div>
+              <div class="relative text-4xl font-black tracking-tight">CHATRE</div>
+            </div>
+            <div class="p-7">
+              <h3 class="text-2xl font-extrabold">AI development & productivity platform</h3>
+              <p class="text-slate-400 mt-3 leading-6">An AI-oriented platform concept combining development, productivity and agent-style workflows.</p>
+              <div class="mt-5 flex gap-2 flex-wrap"><span class="tag">AI</span><span class="tag">Cloud</span><span class="tag">Web</span></div>
+              <a href="https://chatre1.akanishibiri4422.workers.dev/" target="_blank" rel="noopener" class="mt-6 inline-flex items-center gap-2 text-[#f6c945] font-bold text-sm">View project <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+            </div>
+          </article>
+
+          <article class="reveal project-card glass rounded-3xl overflow-hidden">
+            <div class="h-56 bg-gradient-to-br from-[#21396a] to-[#3b424f] relative p-7 flex flex-col justify-between">
+              <div class="relative flex justify-between"><span class="text-xs uppercase tracking-[.2em] text-[#f6c945]">Web Platform</span><i data-lucide="layout-template"></i></div>
+              <div class="relative text-4xl font-black tracking-tight">WEBSTUDIO</div>
+            </div>
+            <div class="p-7">
+              <h3 class="text-2xl font-extrabold">Re-EL WebStudio</h3>
+              <p class="text-slate-400 mt-3 leading-6">A website-building platform concept created to simplify the production of professional web experiences.</p>
+              <div class="mt-5 flex gap-2 flex-wrap"><span class="tag">Web</span><span class="tag">UI/UX</span><span class="tag">Builder</span></div>
+              <a href="https://akani-shibiri-portfolio.vercel.app/" target="_blank" rel="noopener" class="mt-6 inline-flex items-center gap-2 text-[#f6c945] font-bold text-sm">See portfolio <i data-lucide="arrow-up-right" class="w-4 h-4"></i></a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- RATES -->
+    <section id="rates" class="py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="reveal max-w-3xl">
+          <p class="text-[#f6c945] text-sm font-bold uppercase tracking-[.22em]">Service rates</p>
+          <h2 class="text-4xl md:text-5xl font-black tracking-tight mt-3">Simple starting rates.</h2>
+          <p class="mt-5 text-slate-400 text-lg leading-7">Rates below are starting points. Final project pricing depends on scope, complexity, integrations, urgency and ongoing support requirements.</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-12">
+          <div class="reveal rate-card glass rounded-3xl p-6">
+            <p class="text-slate-400 text-sm">Software Development</p>
+            <div class="mt-3 text-4xl font-black">R300<span class="text-base text-slate-500">/hr</span></div>
+            <p class="mt-3 text-sm text-slate-500">Full-stack development and feature work.</p>
+          </div>
+          <div class="reveal rate-card glass rounded-3xl p-6">
+            <p class="text-slate-400 text-sm">Technical Support</p>
+            <div class="mt-3 text-4xl font-black">R250<span class="text-base text-slate-500">/hr</span></div>
+            <p class="mt-3 text-sm text-slate-500">Troubleshooting and technical assistance.</p>
+          </div>
+          <div class="reveal rate-card glass rounded-3xl p-6 border-[#f6c945]/25">
+            <p class="text-[#f6c945] text-sm font-bold">Web Applications</p>
+            <div class="mt-3 text-4xl font-black">R5k<span class="text-base text-slate-500">+</span></div>
+            <p class="mt-3 text-sm text-slate-500">Custom application development from scope.</p>
+          </div>
+          <div class="reveal rate-card glass rounded-3xl p-6">
+            <p class="text-slate-400 text-sm">Monthly Support</p>
+            <div class="mt-3 text-4xl font-black">R2.5k<span class="text-base text-slate-500">+</span></div>
+            <p class="mt-3 text-sm text-slate-500">Flexible ongoing technical assistance.</p>
+          </div>
+        </div>
+
+        <div class="reveal mt-5 glass rounded-3xl p-7">
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div><p class="text-slate-500 text-xs uppercase tracking-wider">Website Development</p><p class="font-bold mt-1">From R2,500</p></div>
+            <div><p class="text-slate-500 text-xs uppercase tracking-wider">API & Integrations</p><p class="font-bold mt-1">From R2,500</p></div>
+            <div><p class="text-slate-500 text-xs uppercase tracking-wider">Bug Fixing</p><p class="font-bold mt-1">From R500</p></div>
+            <div><p class="text-slate-500 text-xs uppercase tracking-wider">Automation</p><p class="font-bold mt-1">From R1,500</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESS -->
+    <section id="process" class="py-28 bg-white/[.018] border-y border-white/5">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="reveal text-center max-w-2xl mx-auto">
+          <p class="text-[#f6c945] text-sm font-bold uppercase tracking-[.22em]">How engagement works</p>
+          <h2 class="text-4xl md:text-5xl font-black tracking-tight mt-3">From requirement to delivery.</h2>
+        </div>
+
+        <div class="grid md:grid-cols-4 gap-5 mt-14">
+          <div class="reveal glass rounded-3xl p-6">
+            <span class="text-[#f6c945] text-sm font-black">01</span>
+            <h3 class="text-xl font-extrabold mt-8">Discover</h3>
+            <p class="text-slate-400 mt-3 leading-6">Understand the requirement, existing system and desired outcome.</p>
+          </div>
+          <div class="reveal glass rounded-3xl p-6">
+            <span class="text-[#f6c945] text-sm font-black">02</span>
+            <h3 class="text-xl font-extrabold mt-8">Scope</h3>
+            <p class="text-slate-400 mt-3 leading-6">Define deliverables, technical approach, timeframe and pricing.</p>
+          </div>
+          <div class="reveal glass rounded-3xl p-6">
+            <span class="text-[#f6c945] text-sm font-black">03</span>
+            <h3 class="text-xl font-extrabold mt-8">Build</h3>
+            <p class="text-slate-400 mt-3 leading-6">Develop, integrate, test and refine against the agreed requirements.</p>
+          </div>
+          <div class="reveal glass rounded-3xl p-6">
+            <span class="text-[#f6c945] text-sm font-black">04</span>
+            <h3 class="text-xl font-extrabold mt-8">Support</h3>
+            <p class="text-slate-400 mt-3 leading-6">Hand over the solution and provide maintenance or ongoing support where required.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPABILITIES -->
+    <section class="py-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+          <div class="reveal">
+            <p class="text-[#f6c945] text-sm font-bold uppercase tracking-[.22em]">Technical stack</p>
+            <h2 class="text-4xl md:text-5xl font-black tracking-tight mt-3">A broad full-stack foundation.</h2>
+            <p class="text-slate-400 mt-5 text-lg leading-7">Suitable for new builds, existing application maintenance and integration work.</p>
+          </div>
+          <div class="reveal flex flex-wrap gap-3">
+            <span class="stack">Java</span><span class="stack">JavaScript</span><span class="stack">React</span><span class="stack">Node.js</span>
+            <span class="stack">Spring Boot</span><span class="stack">HTML5</span><span class="stack">CSS3</span><span class="stack">TypeScript</span>
+            <span class="stack">PostgreSQL</span><span class="stack">MongoDB</span><span class="stack">REST APIs</span><span class="stack">Git</span>
+            <span class="stack">Cloud Development</span><span class="stack">UI/UX</span><span class="stack">Automation</span><span class="stack">AI Solutions</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section id="contact" class="pb-28">
+      <div class="max-w-7xl mx-auto px-5 lg:px-8">
+        <div class="reveal relative overflow-hidden rounded-[2rem] bg-[#f6c945] text-[#0b1224] p-8 md:p-14">
+          <div class="absolute -right-20 -top-32 w-80 h-80 rounded-full border-[50px] border-[#0b1224]/5"></div>
+          <div class="relative max-w-3xl">
+            <p class="text-xs uppercase tracking-[.22em] font-black opacity-60">Let's work together</p>
+            <h2 class="text-4xl md:text-6xl font-black tracking-tight mt-3">Have a technical requirement?</h2>
+            <p class="text-lg md:text-xl mt-5 max-w-2xl opacity-75 leading-8">
+              Send the requirement, current system details or project brief. Re-EL can assess the scope and provide a suitable delivery and pricing proposal.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="mailto:info@re-el-branding.rf.gd" class="inline-flex items-center gap-2 rounded-xl bg-[#0b1224] text-white px-6 py-3.5 font-bold hover:scale-105 transition">
+                Email Re-EL <i data-lucide="mail" class="w-4 h-4"></i>
+              </a>
+              <a href="https://akani-shibiri-portfolio.vercel.app/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-xl bg-white/60 px-6 py-3.5 font-bold hover:bg-white transition">
+                Portfolio <i data-lucide="external-link" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5 py-10">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 flex flex-col md:flex-row gap-5 items-center justify-between">
+      <div>
+        <p class="font-extrabold">Re-EL Branding & Technologies</p>
+        <p class="text-xs text-slate-500 mt-1">Software Development • Web Applications • Automation • Technical Services</p>
+      </div>
+      <div class="text-xs text-slate-500">© <span id="year"></span> Re-EL Branding & Technologies. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <style>
+    .tag {
+      display:inline-flex; padding:.35rem .65rem; border-radius:999px;
+      background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.08);
+      color:#aab5cb; font-size:.72rem; font-weight:700;
+    }
+    .stack {
+      display:inline-flex; padding:.75rem 1rem; border-radius:1rem;
+      background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.09);
+      color:#d7deed; font-weight:700; font-size:.9rem;
+      transition:all .3s;
+    }
+    .stack:hover { transform:translateY(-3px); border-color:rgba(246,201,69,.35); color:#f6c945; }
+  </style>
+
+  <script>
+    // Icons
+    lucide.createIcons();
+
+    // Smooth scrolling
+    const lenis = new Lenis({ duration: 1.15, smoothWheel: true });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // GSAP
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Hero entrance
+    gsap.from(".hero-item", {
+      y: 28, opacity: 0, duration: .8, stagger: .11,
+      ease: "power3.out", delay: .15
+    });
+    gsap.from(".hero-panel", {
+      x: 45, opacity: 0, duration: 1.1, ease: "power3.out", delay: .35
+    });
+
+    // Scroll reveals
+    document.querySelectorAll(".reveal").forEach((el) => {
+      gsap.to(el, {
+        scrollTrigger: { trigger: el, start: "top 88%", once: true },
+        opacity: 1, y: 0, duration: .8, ease: "power3.out"
+      });
+    });
+
+    // Navbar
+    const nav = document.getElementById("navbar");
+    ScrollTrigger.create({
+      start: "top -30",
+      onUpdate: self => nav.classList.toggle("nav-scrolled", self.scroll() > 30)
+    });
+
+    // Gentle hero parallax
+    gsap.to(".hero-panel", {
+      yPercent: -7,
+      ease: "none",
+      scrollTrigger: { trigger: "#top", start: "top top", end: "bottom top", scrub: true }
+    });
+
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Smooth anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener("click", e => {
+        const target = document.querySelector(link.getAttribute("href"));
+        if (target) {
+          e.preventDefault();
+          lenis.scrollTo(target, { offset: -80 });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
